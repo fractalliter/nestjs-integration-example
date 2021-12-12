@@ -75,19 +75,23 @@ In this approach, only the first requests and the request with invalid TTL for t
 
 Here are the benchmarks that has been done with <a href="https://www.joedog.org/siege-manual/" target="_blank">siege</a>.
 
+```bash
+siege -t90s http://localhost:3000/movieTrailer?movie_url=https://content.viaplay.se/pc-se/film/focus-2015
 ```
-Transactions:		          250000 hits
-Availability:		          100.00 %
-Elapsed time:		          132.08 secs
-Data transferred:	        72.96 MB
-Response time:		        0.03 secs
-Transaction rate:	        1892.79 trans/sec
-Throughput:		            0.55 MB/sec
-Concurrency:		          49.90
-Successful transactions:  250000
-Failed transactions:	    0
-Longest transaction:	    0.06
-Shortest transaction:	    0.02
+
+```
+Transactions:		      182089 hits
+Availability:		      100.00 %
+Elapsed time:		       89.93 secs
+Data transferred:	       53.14 MB
+Response time:		        0.01 secs
+Transaction rate:	     2024.79 trans/sec
+Throughput:		        0.59 MB/sec
+Concurrency:		       24.92
+Successful transactions:      182089
+Failed transactions:	           0
+Longest transaction:	        0.04
+Shortest transaction:	        0.00
 
 ```
 
