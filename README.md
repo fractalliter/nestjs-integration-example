@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Finding movie trailers for a url.
 
 ## Installation
 
@@ -60,32 +60,34 @@ $ npm run test:cov
 
 ## Solution
 
-The solution comprises of 2 main part:
+The solution comprises of 2 main parts:
 
 1. Gathering information from servers
 2. Caching the responses based on their cach-control
 
-In the gathering part first a get request will be send to Viaplay file `MovieDetailsDTO` and then search the movie based on the title and the year of the release in TMDB movie search endpoint. Then after acquiring the movie ID send a request to movie videos endpoint of TMDB for finding the movie trailers and return the trailers with movie imdb information to client `MovieTrailersDTO`. 
+In the gathering part first a get request will be fetched from Viaplay movie endpoint `MovieDetailsDTO` and will be cached and then search the movie based on the title and the year of the release in TMDB movie search endpoint and cache the result. Then after acquiring the movie ID, will send a request to movie videos endpoint of TMDB for finding the movie trailers and return the official trailers with movie imdb information to client and cache the results `MovieTrailersDTO`. 
 
-In every request has been sent to each endpoint fetched data will be cached with a ttl of the cache-control which is provided by every endpoint and after all the trailers for a movie will be cached and will be reverted to the end user if the ttl is still valid.
+In every request that has been sent to each endpoint, the fetched data will be cached with a ttl of the HTTP header `cache-control: max-age=<time-in-ms>` which is provided by every endpoint and after all the trailers for a movie have been cached, it will be reverted back to the end user if the ttl is still valid from cache but if not, will make the request again.
 
 In this approach only first requests and the request with invalid ttl for the cached data will be slow but the rest of them would be blazingly fast.
 
 ## Benchmarks
 
+Here are the benchmarks that has been done with <a href="https://www.joedog.org/siege-manual/" target="_blank">siege</a>.
+
 ```
-Transactions:		      250000 hits
-Availability:		      100.00 %
-Elapsed time:		      132.08 secs
-Data transferred:	       72.96 MB
+Transactions:		          250000 hits
+Availability:		          100.00 %
+Elapsed time:		          132.08 secs
+Data transferred:	        72.96 MB
 Response time:		        0.03 secs
-Transaction rate:	     1892.79 trans/sec
-Throughput:		        0.55 MB/sec
-Concurrency:		       49.90
-Successful transactions:      250000
-Failed transactions:	           0
-Longest transaction:	        0.06
-Shortest transaction:	        0.02
+Transaction rate:	        1892.79 trans/sec
+Throughput:		            0.55 MB/sec
+Concurrency:		          49.90
+Successful transactions:  250000
+Failed transactions:	    0
+Longest transaction:	    0.06
+Shortest transaction:	    0.02
 
 ```
 
