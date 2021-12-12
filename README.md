@@ -60,16 +60,16 @@ $ npm run test:cov
 
 ## Solution
 
-The solution comprises of 2 main parts:
+The solution comprises 2 main parts:
 
 1. Gathering information from servers
-2. Caching the responses based on their cach-control
+2. Caching the responses based on their cache-control
 
-In the gathering part first a get request will be fetched from Viaplay movie endpoint `MovieDetailsDTO` and will be cached and then search the movie based on the title and the year of the release in TMDB movie search endpoint and cache the result. Then after acquiring the movie ID, will send a request to movie videos endpoint of TMDB for finding the movie trailers and return the official trailers with movie imdb information to client and cache the results `MovieTrailersDTO`. 
+In the gathering part, first, a get request will be fetched from Viaplay movie endpoint `MovieDetailsDTO` and will be cached and then search the movie based on the title and the year of the release in TMDB movie search endpoint and cache the result. Then after acquiring the movie ID, will send a request to the movie videos endpoint of TMDB for finding the movie trailers and return the official trailers with movie IMDB information to the client and cache the results `MovieTrailersDTO`. 
 
-In every request that has been sent to each endpoint, the fetched data will be cached with a ttl of the HTTP header `cache-control: max-age=<time-in-ms>` which is provided by every endpoint and after all the trailers for a movie have been cached, it will be reverted back to the end user if the ttl is still valid from cache but if not, will make the request again.
+In every request to each endpoint, the fetched data will be cached with a TTL of the HTTP header `cache-control: max-age=<time-in-ms>` request, provided by every endpoint. After all the trailers for a movie have been cached, they will be reverted back to the end-user. For the rest of the coming requests, if the TTL is still valid from the cache, but if it's not, it will make the request again.
 
-In this approach only first requests and the request with invalid ttl for the cached data will be slow but the rest of them would be blazingly fast.
+In this approach, only the first requests and the request with invalid TTL for the cached data will be slow, but the rest of them will be blazingly fast.
 
 ## Benchmarks
 
