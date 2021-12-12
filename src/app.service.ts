@@ -38,11 +38,12 @@ export class AppService {
       viaplayMovieDetails = await this.cacheManager.get(`viaplay-${url}`);
 
       if (!viaplayMovieDetails) {
-        // Get viaply movie details
+        // Get movie details from Viaplay endpoint
         const {data, headers} = await firstValueFrom(this.httpService.get(url));
         const ttl = getCacheControl(headers);
         const {imdb, production, title} = data._embedded['viaplay:blocks'][0]._embedded['viaplay:product'].content;
-        this.cacheManager.set(`viaplay-${url}`, {...imdb, title}, {ttl});
+        // Cache movie details fetched from Viaplay
+        this.cacheManager.set(`viaplay-${url}`, {...imdb, ...production, title}, {ttl});
         viaplayMovieDetails = {...imdb, ...production, title};
       }
       const {title, year} = viaplayMovieDetails;
@@ -50,19 +51,21 @@ export class AppService {
       // Get cached movie id from TMDB
       movieTMDBID = await this.cacheManager.get(queryURL);
       if (!movieTMDBID) {
-        // Search TMDB movies and get id of movie
+        // Search TMDB movies and get id of the movie
         const {data, headers} = await firstValueFrom(this.httpService.get(queryURL));
         const ttl = getCacheControl(headers);
         const {id} = data.results[0];
         this.cacheManager.set(queryURL, id, {ttl});
         movieTMDBID = id;
       }
+      // Search for movie trailers and filter the official ones
       const movieTrailersURL = `${movieURL}/${movieTMDBID}/videos?api_key=${apiKey}&language=en-US`;
       const {data, headers} = await firstValueFrom(this.httpService.get(movieTrailersURL));
       const ttl = getCacheControl(headers);
       const trailerKeys: string[] = data.results.filter(result => result.official).map(({key}) => key);
       const trs = trailerKeys.map(key => `https://www.youtube.com/watch?v=${key}`);
       const movieDetailsWithTrailers = {...viaplayMovieDetails, trailers: trs};
+      // Cache the tralers with movie IMDB info
       this.cacheManager.set(url, movieDetailsWithTrailers, {ttl});
       return movieDetailsWithTrailers;
     } catch (error) {
