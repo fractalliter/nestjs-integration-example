@@ -28,14 +28,14 @@ describe('AppController', () => {
       const movie = "https://content.viaplay.se/pc-se/film/focus-2015"
       const response = await appController.getMovieTrailer(movie);
       expect(response).toBeDefined();
-      expect(Array.isArray((response as MovieTrailersDTO).trailers)).toEqual(true)
+      expect(Array.isArray((response as MovieTrailersDTO).trailers)).toEqual(true);
     }, 30000);
 
     it("should return movie trailers faster from cache", async () => {
       const movie = "https://content.viaplay.se/pc-se/film/focus-2015"
       const response = await appController.getMovieTrailer(movie);
       expect(response).toBeDefined();
-      expect(Array.isArray((response as MovieTrailersDTO).trailers)).toEqual(true)
+      expect(Array.isArray((response as MovieTrailersDTO).trailers)).toEqual(true);
     });
 
     it("should return an error", (done) => {
